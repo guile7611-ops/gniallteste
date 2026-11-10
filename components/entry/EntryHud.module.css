@@ -1,0 +1,25 @@
+/* Rótulos do HUD da entrada (D-011): coordenadas das pontas dos colchetes em índices da matriz.
+   Decorativos (o palco é aria-hidden). IBM Plex Sans com algarismos tabulares (D-006 pendente). */
+
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  font-family: var(--font-family-brand);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary); /* #B7C5D4 sobre #0C1E36: ≈ 9,5:1 */
+  white-space: nowrap;
+  will-change: transform, opacity;
+}

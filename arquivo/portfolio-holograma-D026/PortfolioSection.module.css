@@ -1,0 +1,396 @@
+/*
+ * Portfólio (D-024). Com WebGL: trilho com uma vista fixa (sticky) e o painel por cima da cena.
+ * Sem WebGL: lista simples.
+ */
+.portfolio {
+  position: relative;
+  /* Por cima do Sobre (z 1): o canvas é transparente do lado de antes do corte. */
+  z-index: 2;
+  color: var(--color-text-primary);
+}
+
+/* A primeira tela do trilho fica por cima da última tela do Sobre (o corte). */
+.track {
+  position: relative;
+  margin-top: -100svh;
+  height: calc(100lvh + var(--screens) * 100svh);
+}
+
+/* Âncoras dos projetos (#projeto-…): o JS põe cada uma onde o projeto fica de frente. */
+.anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.view {
+  position: sticky;
+  top: 0;
+  height: 100lvh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Painel por cima da cena */
+.hud {
+  position: absolute;
+  inset: 0 0 auto;
+  /* Contexto próprio: os véus (z -1) ficam atrás do texto, mas na frente do canvas. */
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    'label counter'
+    '. .'
+    'meta meta'
+    'nav nav';
+  row-gap: 1.25rem;
+  height: 100svh;
+  padding: clamp(20px, 4svh, 40px) var(--gutter) clamp(16px, 3svh, 32px);
+}
+
+/*
+ * Véus atrás do texto (contraste medido sobre a cena): embaixo, onde ficam o índice e os dados do
+ * projeto, e em cima, onde ficam o título e o contador.
+ */
+.hud::before,
+.hud::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hud::before {
+  bottom: 0;
+  height: 46%;
+  background: linear-gradient(
+    to top,
+    rgb(7 19 33 / 0.92) 0%,
+    rgb(7 19 33 / 0.86) 55%,
+    rgb(7 19 33 / 0) 100%
+  );
+}
+
+.hud::after {
+  top: 0;
+  height: 22%;
+  /* Atrás do título e do contador fica ≥ 0,8 (texto secundário ≥ 5,9:1 mesmo sobre um nó branco). */
+  background: linear-gradient(to bottom, rgb(7 19 33 / 0.88) 0%, rgb(7 19 33 / 0.8) 45%, rgb(7 19 33 / 0) 100%);
+}
+
+.label {
+  grid-area: label;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.counter {
+  grid-area: counter;
+  margin: 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+
+.counterNow {
+  color: var(--color-text-primary);
+}
+
+/* Dados do projeto da vez. Trocam com uma entrada curta (menos de 1 s). */
+.meta {
+  grid-area: meta;
+  display: grid;
+  gap: 0.75rem;
+  max-width: 34rem;
+  animation: metaIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes metaIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.metaList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.metaTerm {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.metaValue {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* Pendência explícita (contorno tracejado): o dado ainda não foi informado. */
+.pending {
+  display: inline-block;
+  padding: 0.125rem 0.625rem;
+  border: 1px dashed var(--color-text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+/* ── Índice: a navegação entre projetos */
+.nav {
+  grid-area: nav;
+}
+
+.index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+}
+
+.link {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding-inline: 0.25rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+}
+
+.link:hover .name {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* Projeto da vez: texto branco e losango cheio (a diferença não é só a cor). */
+.link[aria-current='true'] {
+  color: var(--color-text-primary);
+}
+
+.marker {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.link[aria-current='true'] .marker {
+  border-color: var(--color-brand-accent);
+  background: var(--color-brand-accent);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 900px) {
+  .hud {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label counter'
+      '. .'
+      'nav meta';
+    column-gap: clamp(32px, 4vw, 72px);
+  }
+
+  /*
+   * O índice e os dados ficam nos cantos de baixo e cada um tem o próprio véu (o véu de baixo, de
+   * ponta a ponta, sai): o meio fica livre para a base de LED e o card da vez (D-026). Atrás do
+   * texto o véu é 0,9; ele só se apaga fora da caixa do texto (3rem acima, 4rem do lado do meio).
+   */
+  .hud::before {
+    content: none;
+  }
+
+  .index,
+  .meta {
+    position: relative;
+  }
+
+  .index::before,
+  .meta::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -3rem;
+    bottom: calc(-1 * clamp(16px, 3svh, 32px));
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 3rem);
+    mask-image: linear-gradient(to bottom, transparent, #000 3rem);
+  }
+
+  .index::before {
+    left: calc(-1 * var(--gutter));
+    right: -4rem;
+    background: linear-gradient(to left, rgb(7 19 33 / 0) 0, rgb(7 19 33 / 0.9) 4rem);
+  }
+
+  .meta::before {
+    left: -4rem;
+    right: calc(-1 * var(--gutter));
+    background: linear-gradient(to right, rgb(7 19 33 / 0) 0, rgb(7 19 33 / 0.9) 4rem);
+  }
+
+  .counter {
+    justify-self: end;
+  }
+
+  .nav {
+    align-self: end;
+  }
+
+  .index {
+    display: grid;
+    gap: 0;
+    max-width: 22rem;
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .index li {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .meta {
+    align-self: end;
+    justify-self: end;
+    justify-items: end;
+    text-align: right;
+  }
+
+  .metaList {
+    justify-content: flex-end;
+  }
+}
+
+/* Celular: o índice vira uma fileira de números (o nome fica para o leitor de tela). */
+@media (max-width: 599px) {
+  .name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .link {
+    min-width: 44px;
+    justify-content: center;
+  }
+}
+
+/* ── Sem WebGL: lista simples */
+.plain {
+  position: relative;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: clamp(48px, 10vw, 128px) var(--gutter);
+  color: var(--color-text-primary);
+}
+
+.plain .label {
+  margin-bottom: 1.25rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.itemIndex {
+  font-size: 0.875rem;
+  line-height: 2rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+
+.itemTitle {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-family-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.fact {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}

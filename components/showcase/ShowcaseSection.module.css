@@ -1,0 +1,38 @@
+/*
+ * Mostruário (D-040, D-051). A seção sobe meia tela por cima do fim do portfólio e prende ali:
+ * a névoa fecha sobre o portfólio, a cena entra atrás dela e a câmera mergulha até a vista de cima
+ * da base enquanto a névoa abre. `--fog`, `--deep` e `--scene` vêm da rolagem (ShowcaseSection).
+ */
+.track {
+  position: relative;
+  z-index: 2;
+  margin-top: -150svh;
+  height: 460svh;
+  --fog: 0;
+  --deep: 0;
+  --scene: 0;
+}
+
+.view {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg, #0c1e36);
+  opacity: var(--scene);
+}
+
+/* Névoa (Fog.tsx): canvas com a fumaça em camadas; a opacidade vem do próprio shader. */
+.fog {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}

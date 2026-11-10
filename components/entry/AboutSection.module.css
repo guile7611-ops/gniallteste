@@ -1,0 +1,136 @@
+/*
+ * Sobre a Gniall. Fundo: o Azul Noturno da página (ou, com WebGL, o mesmo azul desenhado no palco,
+ * com uma luz suave atrás do símbolo). Sem grade.
+ */
+.about {
+  position: relative;
+  z-index: 1;
+  color: var(--color-text-primary);
+}
+
+/*
+ * ── Primeira tela (D-017), no modelo do Sobre do Active Theory: título grande à esquerda, símbolo
+ * no meio, texto pequeno à direita. No celular: título, símbolo e texto, um embaixo do outro.
+ * O símbolo fica numa coluna só dele: o texto nunca passa por cima nem por baixo dele.
+ */
+.intro {
+  display: grid;
+  align-content: center;
+  gap: clamp(24px, 4svh, 40px);
+  min-height: 100svh;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: clamp(48px, 8svh, 96px) var(--gutter);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+}
+
+/* Mínimo oficial do símbolo: 30 px. O arquivo já traz a área de segurança em volta. */
+.symbol {
+  width: clamp(140px, 52vw, 240px);
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.head,
+.text {
+  max-width: 40rem;
+}
+
+@media (min-width: 900px) {
+  .intro {
+    grid-template-columns: minmax(0, 1.9fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(32px, 4vw, 72px);
+  }
+
+  .symbol {
+    width: clamp(220px, min(30vw, 50svh), 460px);
+  }
+
+  .head {
+    max-width: none;
+  }
+
+  .text {
+    justify-self: end;
+    max-width: 26rem;
+  }
+}
+
+/* Sem o símbolo em metal (logo HTML), o arquivo do símbolo entra no fim da passagem. */
+.markReveal {
+  opacity: clamp(0, calc(var(--about-in, 1) * 1.6), 1);
+}
+
+/* Símbolo em metal no lugar (D-015): o arquivo continua no layout, só fica transparente. */
+.symbol[data-metal] {
+  opacity: 0;
+}
+
+/*
+ * Título: grande, em caixa alta, uma ideia por linha (modelo do Active Theory, D-017). Fonte de
+ * títulos (D-018: NB Architekt quando os arquivos da licença chegarem; até lá, a Plex). Brilho
+ * branco suave em volta das letras: a luz da descida que chega ao texto. O brilho fica por fora
+ * da letra e não muda a cor dela (contraste da letra branca sobre o azul igual ao de sempre).
+ */
+.heading {
+  margin: 0;
+  font-family: var(--font-family-display);
+  /* Cabe "ISSO QUE" numa linha na coluna da esquerda em qualquer largura. */
+  font-size: clamp(3.5rem, 0.5rem + 8vw, 11rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  text-shadow:
+    0 0 0.18em rgb(255 255 255 / 0.35),
+    0 0 0.7em rgb(255 255 255 / 0.12);
+}
+
+.line {
+  display: block;
+}
+
+/* Texto do Sobre em NB Architekt também (D-045), em caixa alta. */
+.lead,
+.essence,
+.body {
+  font-family: var(--font-family-display);
+}
+
+/* Frase curta antes do texto, no tamanho do texto. */
+.lead {
+  margin: 0 0 1.5rem;
+  font-size: 0.875rem;
+  line-height: 2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  text-shadow: 0 0 0.6em rgb(255 255 255 / 0.3);
+}
+
+/* Texto: pequeno, em caixa alta, com entrelinha larga (D-017). */
+.essence,
+.body {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-wrap: pretty;
+}
+
+.essence {
+  color: var(--color-text-primary);
+}
+
+.body {
+  margin-top: 1.5rem;
+  color: var(--color-text-secondary);
+}

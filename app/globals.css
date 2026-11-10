@@ -1,0 +1,59 @@
+/* NB Architekt (D-018, D-044): arquivo da licença web do cliente. Só títulos grandes, em caixa alta. */
+@font-face {
+  font-family: 'NB Architekt';
+  src: url('/fonts/nb-architekt-pro-r.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tokens: cores oficiais do manual + tokens complementares sugeridos (docs/IDENTIDADE-VISUAL-GNIALL.md §3). */
+:root {
+  --color-brand-primary: #0c1e36; /* Azul Noturno Soberano (oficial, dominante) */
+  --color-brand-accent: #00d2d3; /* Ciano Cibernético (oficial, só acento) */
+
+  --color-background: #071321;
+  --color-surface-raised: #142b46;
+  --color-border: #29415b;
+  --color-text-primary: #f4f8fc;
+  --color-text-secondary: #b7c5d4;
+
+  --font-family-brand: var(--font-plex), 'IBM Plex Sans', system-ui, sans-serif;
+  /* Títulos grandes (D-018): NB Architekt quando os arquivos da licença web chegarem; até lá, Plex. */
+  --font-family-display: 'NB Architekt', var(--font-family-brand);
+  --gutter: clamp(16px, 3vw, 40px);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-brand-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-brand);
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 3px;
+}

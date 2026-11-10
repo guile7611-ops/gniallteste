@@ -1,0 +1,128 @@
+/*
+ * Entrada + passagem para o Sobre (D-015).
+ * Sem WebGL (ou sem JS): as duas seções ficam uma embaixo da outra, sem trecho fixo.
+ * Com WebGL (`data-scroll='pin'`): o palco fica fixo na tela, a entrada fica parada (sticky)
+ * durante `--travel` de rolagem e o Sobre entra por baixo dela, já no lugar ao fim do trecho.
+ */
+.experience {
+  position: relative;
+  isolation: isolate;
+}
+
+.stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100lvh;
+  pointer-events: none;
+}
+
+.pin {
+  position: relative;
+  z-index: 1;
+}
+
+.entry {
+  /* Largura do <img> do logo vertical. Mínimo oficial do vertical: 100 px. */
+  --logo-w: clamp(180px, min(46svh, 62vw), 400px);
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: var(--gutter);
+  overflow: hidden;
+  background: var(--color-brand-primary);
+}
+
+.experience[data-scroll='pin'] {
+  --about-in: 0;
+  /* Entrada, descida com o vídeo e as luzes (D-019) e chegada ao Sobre: 3 telas (D-030). */
+  --travel: 300svh;
+}
+
+.experience[data-scroll='pin'] .pin {
+  min-height: calc(100svh + var(--travel));
+}
+
+/* O palco desenha o fundo (data center e, depois do corte, o Azul Noturno do Sobre). */
+.experience[data-scroll='pin'] .entry {
+  position: sticky;
+  top: 0;
+  background: transparent;
+}
+
+/* A primeira tela do Sobre ocupa a última tela do trecho fixo. */
+.experience[data-scroll='pin'] .about {
+  margin-top: -100svh;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  line-height: 0;
+}
+
+.logo {
+  width: var(--logo-w);
+  height: auto;
+  aspect-ratio: 1;
+  transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/*
+ * Área de segurança do logo = largura do "A" do wordmark ≈ 17% da largura do <img>.
+ * O conteúdo do SVG termina a ~90% da altura; a margem completa a área de segurança.
+ */
+.copy {
+  max-width: 34rem;
+  margin-top: calc(var(--logo-w) * 0.08);
+  transition:
+    opacity 0.7s ease 0.35s,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s;
+}
+
+.lead {
+  margin: 0;
+  font-size: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.note {
+  margin: 0.6rem 0 0;
+  font-size: clamp(0.875rem, 0.84rem + 0.2vw, 1rem);
+  color: var(--color-text-secondary);
+  text-wrap: balance;
+}
+
+/*
+ * Logo em metal 3D (D-013): o WebGL desenha o logo em metal exatamente sobre o arquivo oficial.
+ * O <img> continua no lugar (texto alternativo e layout), só fica transparente. Se o WebGL cair,
+ * o atributo sai e o arquivo oficial volta.
+ */
+.logo[data-metal] {
+  opacity: 0;
+}
+
+/* Com JS, o logo HTML espera a montagem em WebGL terminar no mesmo lugar. */
+:global(.js) .entry[data-intro='pending'] .logo {
+  opacity: 0;
+}
+
+:global(.js) .entry[data-intro='pending'] .copy {
+  opacity: 0;
+  transform: translateY(12px);
+}
